@@ -98,6 +98,12 @@ class PolarVector(Vector):
         # Initialization complete
         self._initializing = False
 
+    def limit(self, speed_limit: float, angle_limit: float = None) -> 'PolarVector':
+        if angle_limit is not None:
+            return PolarVector(max(min(self.angle, angle_limit), -angle_limit),
+                               max(min(self.speed, speed_limit), -speed_limit)).limit(angle_limit)
+        return PolarVector(self.angle, max(min(self.speed, speed_limit), -speed_limit))
+
     @property
     def angle(self):
         """Angle in radians."""
