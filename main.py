@@ -6,11 +6,11 @@ from boids import Boids
 def main() -> None:
     pygame.init()
     
-    width, height = 400, 400
+    width, height = 1000, 1000
     screen: pygame.Surface = pygame.display.set_mode((width, height))
     clock: pygame.time.Clock = pygame.time.Clock()
     
-    boids: Boids = Boids(10, screen)
+    boids: Boids = Boids(50, screen)
     
     running = True
     while running:
@@ -26,8 +26,6 @@ def main() -> None:
         boids.show()
 
         pygame.display.flip()
-    
-    pass
 
 
 if __name__ == '__main__':

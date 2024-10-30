@@ -21,7 +21,7 @@ class Boids:
 
     def update(self, dt):
         for boid in self.boids:
-            boid.update_pos(dt)
+            boid.calculate(dt, self.boids)
 
     def show(self):
         for boid in self.boids:

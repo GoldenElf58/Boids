@@ -11,6 +11,14 @@ class Vector:
     
     def limit(self, x_limit: float, y_limit: float):
         return Vector(max(min(self.x, x_limit), -x_limit), max(min(self.y, y_limit), -y_limit))
+
+    def distance(self, other) -> float:
+        return (self - other).__len__()
+    
+    def to_polar(self):
+        angle = math.atan2(self.y, self.x)
+        speed = (self.x ** 2 + self.y ** 2) ** 0.5
+        return PolarVector(angle, speed)
     
     def __add__(self, other):
         return Vector(self.x + other.x, self.y + other.y)
