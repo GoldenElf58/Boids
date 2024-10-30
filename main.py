@@ -6,11 +6,11 @@ from boids import Boids
 def main() -> None:
     pygame.init()
     
-    width, height = 1000, 1000
+    width, height = 1920, 1080
     screen: pygame.Surface = pygame.display.set_mode((width, height))
     clock: pygame.time.Clock = pygame.time.Clock()
     
-    boids: Boids = Boids(90, screen)
+    boids: Boids = Boids(150, screen, 80)
     
     running = True
     while running:
@@ -19,6 +19,9 @@ def main() -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
         
         screen.fill((0, 0, 0))
         
