@@ -10,7 +10,7 @@ def main() -> None:
     screen: pygame.Surface = pygame.display.set_mode((width, height))
     clock: pygame.time.Clock = pygame.time.Clock()
     
-    boids: Boids = Boids(50, screen)
+    boids: Boids = Boids(90, screen)
     
     running = True
     while running:
