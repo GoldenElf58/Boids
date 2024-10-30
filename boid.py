@@ -50,7 +50,6 @@ class Boid:
         
         self.vel += cohesion + separation + alignment
         self.vel = self.vel.limit(30)
-        self.update_pos(dt)
     
     def cohesion(self, boid):
         return boid.pos - self.pos
