@@ -15,6 +15,9 @@ class Vector:
     def distance(self, other) -> float:
         return (self - other).__len__()
     
+    def distance_squared(self, other) -> float:
+        return (self.x - other.x) ** 2 + (self.y - other.y) ** 2
+    
     def to_polar(self):
         angle = math.atan2(self.y, self.x)
         speed = (self.x ** 2 + self.y ** 2) ** 0.5
