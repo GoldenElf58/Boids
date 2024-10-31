@@ -54,9 +54,9 @@ class Boid:
         total = 0
         
         for boid in boids:
-            if boid != self and (d := self.pos.distance(boid.pos)) < perception_radius:
+            if boid != self and (d2 := self.pos.distance_squared(boid.pos)) < perception_radius ** 2:
                 cohesion += self.cohesion(boid)
-                separation += self.separate(boid, d, perception_radius)
+                separation += self.separate(boid, d2, perception_radius)
                 alignment += self.align(boid)
                 total += 1
         
@@ -84,7 +84,7 @@ class Boid:
     def separate(self, boid, dist: float, perception_radius: float = 50):
         if dist == 0:
             return PolarVector()
-        return ((self.pos - boid.pos).to_polar() / dist) * perception_radius
+        return ((self.pos - boid.pos).to_polar() / dist) * (perception_radius ** 2)
     
     def align(self, boid):
         return PolarVector(boid.vel.angle, 1)
