@@ -1,5 +1,4 @@
 import math
-import random
 
 import pygame
 
@@ -83,8 +82,8 @@ class Boid:
     
     def separate(self, boid, dist: float, perception_radius: float = 50):
         if dist == 0:
-            return PolarVector()
-        return ((self.pos - boid.pos).to_polar() / dist) * (perception_radius ** 2)
+            return PolarVector(self.vel.angle, 0)
+        return ((self.pos - boid.pos).to_polar() / dist) * perception_radius ** 2
     
     def align(self, boid):
         return PolarVector(boid.vel.angle, 1)

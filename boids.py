@@ -16,7 +16,7 @@ class Boids:
         self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), 4)
         self.area = Area(0, 0, self.screen.get_width(), self.screen.get_height())
         self.create_boids()
-
+    
     def create_boids(self):
         for i in range(self.num_boids):
             x = random.randint(0, self.screen.get_width())
@@ -26,12 +26,12 @@ class Boids:
             boid = Boid(x, y, angle, speed, self.screen)
             self.all_boids.append(boid)
             self.update_quadtree()
-        
+    
     def update_quadtree(self):
         self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), 4)
         for boid in self.all_boids:
             self.boids.insert(boid)
-
+    
     def update(self, dt):
         for boid in self.all_boids:
             r = self.perception_radius

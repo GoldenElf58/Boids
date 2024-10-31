@@ -21,7 +21,7 @@ class Quadtree:
                 node.insert(obj)
         self.objects = []
         self.divided = True
-
+    
     def insert(self, obj):
         if len(self.nodes) >= self.max_objects:
             if not self.divided:
@@ -32,13 +32,13 @@ class Quadtree:
         if self.contains(obj):
             self.objects.append(obj)
         return
-
+    
     def contains(self, obj, point=True):
         if point:
             return self.x <= obj.pos.x <= self.x + self.w and self.y <= obj.pos.y <= self.y + self.h
         return ((self.x <= obj.x <= self.x + self.w or self.x <= obj.x + obj.w <= self.x + self.w) and
                 (self.y <= obj.y <= self.y + self.h or self.y <= obj.y + obj.h <= self.y + self.h))
-
+    
     def query(self, area) -> list:
         results = []
         if not self.contains(area, False):
@@ -60,4 +60,3 @@ class Quadtree:
                 results.extend(node.query_all)
             return results
         return self.objects
-    

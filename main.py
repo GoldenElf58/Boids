@@ -5,10 +5,10 @@ from boids import Boids
 
 def main() -> None:
     pygame.init()
-    # pygame.font.init()
+    pygame.font.init()
     
     width, height = 1920, 1080
-    # font = pygame.font.SysFont(None, 32)
+    font = pygame.font.SysFont(None, 32)
     screen: pygame.Surface = pygame.display.set_mode((width, height))
     clock: pygame.time.Clock = pygame.time.Clock()
     
@@ -17,11 +17,11 @@ def main() -> None:
     fps = 0
     total = 0
     running = True
-    i = 0
+    # i = 0
     while running:
         dt = clock.tick(60) / 1000
-        i += dt
-        fps += 1/dt
+        # i += dt
+        fps += 1 / dt
         total += 1
         
         for event in pygame.event.get():
@@ -33,18 +33,16 @@ def main() -> None:
         
         screen.fill((0, 0, 0))
         
-        # text = font.render(str(1/dt), True, (255,255,255))
-        # text_rect = text.get_rect(center=(50,50))
-        # screen.blit(text, text_rect)
-        
+        text = font.render(f'{fps / total:.1f}', True, (255, 255, 255))
+        text_rect = text.get_rect(center=(50, 50))
+        screen.blit(text, text_rect)
         
         boids.update(dt)
         boids.show()
         
-        if i > 1:
-            print(fps/total)
-            i = 0
-        
+        # if i > 1:
+        #     print(fps / total)
+        #     i = 0
         
         pygame.display.flip()
 
