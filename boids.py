@@ -12,6 +12,7 @@ class Boids:
         self.screen = screen
         self.perception_radius = perception_radius
         
+        self.all_boids = []
         self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), 4)
         self.area = Area(0, 0, self.screen.get_width(), self.screen.get_height())
         self.create_boids()
@@ -23,14 +24,26 @@ class Boids:
             angle = random.uniform(0, math.tau)
             speed = random.randrange(20, 50)
             boid = Boid(x, y, angle, speed, self.screen)
+            self.all_boids.append(boid)
+            self.update_quadtree()
+        
+    def update_quadtree(self):
+        self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), 4)
+        for boid in self.all_boids:
             self.boids.insert(boid)
 
     def update(self, dt):
-        for boid in self.boids.query(self.area):
-            boid.calculate(dt, self.boids, self.perception_radius)
-        for boid in self.boids.query(self.area):
+        for boid in self.all_boids:
+            r = self.perception_radius
+            area = Area(boid.pos.x - r, boid.pos.y - r, r * 2, r * 2)
+            boids = self.boids.query(area)
+            boid.calculate(dt, boids, r)
+        
+        for boid in self.all_boids:
             boid.update_pos(dt)
-
+        
+        self.update_quadtree()
+    
     def show(self):
-        for boid in self.boids.query(self.area):
+        for boid in self.all_boids:
             boid.show()
