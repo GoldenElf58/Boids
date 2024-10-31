@@ -43,7 +43,12 @@ class Quadtree:
         results = []
         if not self.contains(area):
             return results
-        for node in self.nodes:
-            if node.contains(area):
-                results.extend(node.query(area))
+        if self.divided:
+            for node in self.nodes:
+                if node.contains(area, False):
+                    results.extend(node.query(area))
+            return results
+        for obj in self.objects:
+            if area.contains(obj):
+                results.append(obj)
         return results
