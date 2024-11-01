@@ -7,14 +7,14 @@ from quadtree import Quadtree
 
 
 class Boids:
-    def __init__(self, num_boids, screen, perception_radius=75):
+    def __init__(self, num_boids, screen, perception_radius=75, max_qt=4):
         self.num_boids = num_boids
         self.screen = screen
         self.perception_radius = perception_radius
         
         self.all_boids = []
-        self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), 4)
-        self.area = Area(0, 0, self.screen.get_width(), self.screen.get_height())
+        self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), max_qt)
+        # self.area = Area(0, 0, self.screen.get_width(), self.screen.get_height())
         self.create_boids()
     
     def create_boids(self):
@@ -37,6 +37,7 @@ class Boids:
             r = self.perception_radius
             area = Area(boid.pos.x - r, boid.pos.y - r, r * 2, r * 2)
             boids = self.boids.query(area)
+            # boid.calculate(dt, self.all_boids, r)
             boid.calculate(dt, boids, r)
         
         for boid in self.all_boids:
