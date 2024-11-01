@@ -1,41 +1,57 @@
 import pygame
+import time
 
 from boids import Boids
 
 
 def main() -> None:
+    show_fps = True
+    num_boids = 150
+    perception_radius = 50
+    max_qt = 4
+    frame_eval = 300
+    fps = 60
+    
     pygame.init()
     pygame.font.init()
     
-    width, height = 1920, 1080
-    font = pygame.font.SysFont(None, 32)
+    width, height = 700, 600
     screen: pygame.Surface = pygame.display.set_mode((width, height))
+    
+    font = pygame.font.SysFont(None, 32)
     clock: pygame.time.Clock = pygame.time.Clock()
     
-    boids: Boids = Boids(200, screen, 80)
+    boids: Boids = Boids(num_boids, screen, perception_radius, max_qt)
     
-    fps = 0
-    total = 0
+    t0 = time.perf_counter()
+    fps_total = 0
+    frames = 0
     running = True
     # i = 0
     while running:
-        dt = clock.tick(60) / 1000
+        dt = clock.tick(fps) / 1000
         # i += dt
-        fps += 1 / dt
-        total += 1
-        
+        fps_total += 1 / dt
+        frames += 1
+        if frames == frame_eval:
+            t1 = time.perf_counter()
+            print(t1 - t0)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                if event.key == pygame.K_f:
+                    show_fps = not show_fps
         
         screen.fill((0, 0, 0))
         
-        text = font.render(f'{fps / total:.1f}', True, (255, 255, 255))
-        text_rect = text.get_rect(center=(50, 50))
-        screen.blit(text, text_rect)
+        if show_fps:
+            text = font.render(f'{fps_total / frames:.1f}', True, (255, 255, 255))
+            # text_rect = text.get_rect(center=(50, 50))
+            screen.blit(text, (10, 10))
         
         boids.update(dt)
         boids.show()
