@@ -1,62 +1,76 @@
 class Quadtree:
     def __init__(self, x, y, w, h, max_objects=4):
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
-        self.objects = []
-        self.nodes = []
-        self.divided = False
-        self.max_objects = max_objects
-    
+        self.x = x  # X-coordinate of the node's top-left corner
+        self.y = y  # Y-coordinate of the node's top-left corner
+        self.w = w  # Width of the node
+        self.h = h  # Height of the node
+        self.objects = []  # Objects contained directly in this node
+        self.nodes = []  # Child nodes (subdivisions)
+        self.divided = False  # Flag indicating whether the node is subdivided
+        self.max_objects = max_objects  # Max objects before subdivision
+
     def subdivide(self):
         w = self.w / 2
         h = self.h / 2
-        self.nodes.append(Quadtree(self.x, self.y, w, h))
-        self.nodes.append(Quadtree(self.x + w, self.y, w, h))
-        self.nodes.append(Quadtree(self.x, self.y + h, w, h))
-        self.nodes.append(Quadtree(self.x + w, self.y + h, w, h))
-        for obj in self.objects:
-            for node in self.nodes:
-                node.insert(obj)
-        self.objects = []
+        self.nodes = [
+            Quadtree(self.x, self.y, w, h, self.max_objects),              # Top-left
+            Quadtree(self.x + w, self.y, w, h, self.max_objects),          # Top-right
+            Quadtree(self.x, self.y + h, w, h, self.max_objects),          # Bottom-left
+            Quadtree(self.x + w, self.y + h, w, h, self.max_objects)       # Bottom-right
+        ]
         self.divided = True
-    
+
+        # Redistribute objects into child nodes
+        for obj in self.objects:
+            self.insert(obj)
+        self.objects = []  # Clear objects after redistributing
+
     def insert(self, obj):
-        if len(self.nodes) >= self.max_objects:
-            if not self.divided:
-                self.subdivide()
-            for node in self.nodes:
-                node.insert(obj)
-            return
-        if self.contains(obj):
-            self.objects.append(obj)
-        return
-    
-    def contains(self, obj, point=True):
-        if point:
-            return self.x <= obj.pos.x <= self.x + self.w and self.y <= obj.pos.y <= self.y + self.h
-        return ((self.x <= obj.x <= self.x + self.w or self.x <= obj.x + obj.w <= self.x + self.w) and
-                (self.y <= obj.y <= self.y + self.h or self.y <= obj.y + obj.h <= self.y + self.h))
-    
-    def query(self, area) -> list:
-        results = []
-        if not self.contains(area, False):
-            return results
+        if not self.contains(obj):
+            return False  # Object does not belong in this node
+
         if self.divided:
+            # Insert into appropriate child node
             for node in self.nodes:
-                if node.contains(area, False):
-                    results.extend(node.query(area))
-            return results
+                if node.insert(obj):
+                    return True
+            return False  # Should not reach here
+        else:
+            self.objects.append(obj)
+            if len(self.objects) > self.max_objects:
+                self.subdivide()
+            return True
+
+    def contains(self, obj):
+        # Check if the point is within the node's boundaries
+        return (self.x <= obj.pos.x < self.x + self.w and
+                self.y <= obj.pos.y < self.y + self.h)
+
+    def intersects(self, area):
+        # Check if the node intersects with a given rectangular area
+        return not (area.x > self.x + self.w or area.x + area.w < self.x or
+                    area.y > self.y + self.h or area.y + area.h < self.y)
+
+    def query(self, area):
+        results = []
+        if not self.intersects(area):
+            return results  # No intersection, return empty list
+
+        # Check objects at the current node
         for obj in self.objects:
             if area.contains(obj):
                 results.append(obj)
-        return results
-    
-    def query_all(self):
-        results = []
+
+        # Recurse into child nodes
         if self.divided:
             for node in self.nodes:
-                results.extend(node.query_all)
-            return results
-        return self.objects
+                results.extend(node.query(area))
+        return results
+
+    def query_all(self):
+        results = []
+        results.extend(self.objects)
+        if self.divided:
+            for node in self.nodes:
+                results.extend(node.query_all())
+        return results

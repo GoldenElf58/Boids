@@ -6,8 +6,9 @@ from boids import Boids
 
 def main() -> None:
     show_fps = True
+    width, height = 1920, 1080
     num_boids = 150
-    perception_radius = 50
+    perception_radius = 75
     max_qt = 4
     frame_eval = 300
     fps = 60
@@ -15,7 +16,6 @@ def main() -> None:
     pygame.init()
     pygame.font.init()
     
-    width, height = 700, 600
     screen: pygame.Surface = pygame.display.set_mode((width, height))
     
     font = pygame.font.SysFont(None, 32)
