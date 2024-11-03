@@ -1,3 +1,6 @@
+import pygame
+
+
 class Quadtree:
     def __init__(self, x, y, w, h, max_objects=4):
         self.x = x  # X-coordinate of the node's top-left corner
@@ -74,3 +77,13 @@ class Quadtree:
             for node in self.nodes:
                 results.extend(node.query_all())
         return results
+
+    def show(self, screen):
+        if self.divided:
+            for node in self.nodes:
+                node.show(screen)
+        else:
+            pygame.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.w, self.h), 1)
+    
+    def __repr__(self):
+        return f"Quadtree(x={self.x}, y={self.y}, w={self.w}, h={self.h})"

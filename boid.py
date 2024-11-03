@@ -87,3 +87,6 @@ class Boid:
     
     def align(self, boid):
         return PolarVector(boid.vel.angle, 1)
+    
+    def __repr__(self):
+        return f"Boid(pos={self.pos}, vel={self.vel}, acc={self.acc})"

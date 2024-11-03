@@ -11,6 +11,7 @@ class Boids:
         self.num_boids = num_boids
         self.screen = screen
         self.perception_radius = perception_radius
+        self.max_qt = max_qt
         
         self.all_boids = []
         self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), max_qt)
@@ -28,7 +29,7 @@ class Boids:
             self.update_quadtree()
     
     def update_quadtree(self):
-        self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), 4)
+        self.boids = Quadtree(0, 0, self.screen.get_width(), self.screen.get_height(), self.max_qt)
         for boid in self.all_boids:
             self.boids.insert(boid)
     
@@ -48,3 +49,13 @@ class Boids:
     def show(self):
         for boid in self.all_boids:
             boid.show()
+    
+    def show_quadtree(self):
+        self.boids.show(self.screen)
+    
+    def __len__(self):
+        return len(self.all_boids)
+    
+    def __repr__(self):
+        return f"Boids({self.num_boids})"
+    

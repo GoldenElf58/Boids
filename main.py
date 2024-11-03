@@ -6,6 +6,8 @@ from boids import Boids
 
 def main() -> None:
     show_fps = True
+    show_quadtree = False
+    update = True
     width, height = 1920, 1080
     num_boids = 150
     perception_radius = 75
@@ -27,12 +29,11 @@ def main() -> None:
     fps_total = 0
     frames = 0
     running = True
-    # i = 0
     while running:
         dt = clock.tick(fps) / 1000
-        # i += dt
         fps_total += 1 / dt
         frames += 1
+        
         if frames == frame_eval:
             t1 = time.perf_counter()
             print(t1 - t0)
@@ -45,20 +46,24 @@ def main() -> None:
                     running = False
                 if event.key == pygame.K_f:
                     show_fps = not show_fps
+                if event.key == pygame.K_q:
+                    show_quadtree = not show_quadtree
+                if event.key == pygame.K_u:
+                    update = not update
         
         screen.fill((0, 0, 0))
         
         if show_fps:
-            text = font.render(f'{fps_total / frames:.1f}', True, (255, 255, 255))
+            text = font.render(f'{1 / dt:.0f}', True, (255, 255, 255))
             # text_rect = text.get_rect(center=(50, 50))
             screen.blit(text, (10, 10))
         
-        boids.update(dt)
-        boids.show()
+        if show_quadtree:
+            boids.show_quadtree()
         
-        # if i > 1:
-        #     print(fps / total)
-        #     i = 0
+        if update:
+            boids.update(dt)
+        boids.show()
         
         pygame.display.flip()
 
