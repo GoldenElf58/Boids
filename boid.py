@@ -6,11 +6,13 @@ from vector import Point, PolarVector
 
 
 class Boid:
-    def __init__(self, x, y, angle, speed, screen):
+    def __init__(self, x, y, angle, speed, screen, max_accel: float = 10, max_vel: float = 50):
         self.pos: Point = Point(x, y)
         self.vel: PolarVector = PolarVector(angle, speed)
         self.acc: PolarVector = PolarVector()
         self.screen: pygame.Surface = screen
+        self.max_accel = max_accel
+        self.max_vel = max_vel
     
     def show(self):
         x = self.pos.x
@@ -36,7 +38,7 @@ class Boid:
         # pygame.draw.circle(self.screen, (255, 255, 255), self.pos.to_tuple(), 5)
     
     def update_pos(self, dt):
-        self.pos += PolarVector(self.vel.angle, self.vel.speed * dt)
+        self.pos += self.vel * dt
         if self.pos.x > self.screen.get_width():
             self.pos.x = 0
         if self.pos.x < 0:
@@ -53,9 +55,9 @@ class Boid:
         total = 0
         
         for boid in boids:
-            if boid != self and (d2 := self.pos.distance_squared(boid.pos)) < perception_radius ** 2:
+            if boid != self and (d_sq := self.pos.distance_squared(boid.pos)) < perception_radius ** 2:
                 cohesion += self.cohesion(boid)
-                separation += self.separate(boid, d2, perception_radius)
+                separation += self.separate(boid, d_sq, perception_radius)
                 alignment += self.align(boid)
                 total += 1
         
@@ -66,24 +68,27 @@ class Boid:
         
         cohesion = cohesion.to_polar()
         
-        cohesion = (cohesion * 1).limit(10)
-        separation = (separation * 1).limit(10.07)
-        alignment = (alignment * 1).limit(10)
+        cohesion = (cohesion * 1).limit(self.max_accel * 2) * 1
+        separation = (separation * 1).limit(self.max_accel * 2) * 200
+        alignment = (alignment * 1).limit(self.max_accel * 2) * 1
         # r = PolarVector(random.uniform(-math.pi / 12, math.pi / 12), 0)
         # print(cohesion, separation, alignment, total)
+        print(cohesion, separation, alignment)
         
         self.acc = cohesion + separation + alignment
-        self.acc.speed = 250 * dt
-        self.vel += self.acc
-        self.vel.speed = 50
-    
+        self.acc.limit(self.max_accel)
+        self.acc.magnitude = self.max_accel
+        self.vel += self.acc * dt
+        self.vel.limit(self.max_vel)
+        self.vel.magnitude = self.max_vel
+
     def cohesion(self, boid):
         return boid.pos - self.pos
     
-    def separate(self, boid, dist: float, perception_radius: float = 50):
-        if dist == 0:
+    def separate(self, boid, dist_squared: float, perception_radius: float = 50):
+        if dist_squared == 0:
             return PolarVector(self.vel.angle, 0)
-        return ((self.pos - boid.pos).to_polar() / dist) * perception_radius ** 2
+        return ((self.pos - boid.pos).to_polar() / dist_squared) * perception_radius ** 2
     
     def align(self, boid):
         return PolarVector(boid.vel.angle, 1)

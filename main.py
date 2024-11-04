@@ -8,9 +8,11 @@ def main() -> None:
     show_fps = True
     show_quadtree = False
     update = True
-    width, height = 1920, 1080
+    width, height = 1920, 1200
     num_boids = 150
     perception_radius = 75
+    max_acceleration = 10
+    max_velocity = 50
     max_qt = 4
     frame_eval = 300
     fps = 60
@@ -23,7 +25,7 @@ def main() -> None:
     font = pygame.font.SysFont(None, 32)
     clock: pygame.time.Clock = pygame.time.Clock()
     
-    boids: Boids = Boids(num_boids, screen, perception_radius, max_qt)
+    boids: Boids = Boids(num_boids, screen, perception_radius, max_qt, max_acceleration, max_velocity)
     
     t0 = time.perf_counter()
     fps_total = 0
