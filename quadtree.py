@@ -45,14 +45,12 @@ class Quadtree:
             return True
 
     def contains(self, obj):
-        # Check if the point is within the node's boundaries
-        return (self.x <= obj.pos.x < self.x + self.w and
-                self.y <= obj.pos.y < self.y + self.h)
+        return self.x <= obj.pos.x < self.x + self.w and self.y <= obj.pos.y < self.y + self.h
 
     def intersects(self, area):
         # Check if the node intersects with a given rectangular area
-        return not (area.x > self.x + self.w or area.x + area.w < self.x or
-                    area.y > self.y + self.h or area.y + area.h < self.y)
+        return not (area.x >= self.x + self.w or area.x + area.w < self.x or
+                    area.y >= self.y + self.h or area.y + area.h < self.y)
 
     def query(self, area):
         results = []
